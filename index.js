@@ -5,9 +5,9 @@ const client = new pg.Client(
 );
 const app = express();
 
-app.get("/api/notes", async (req, res, next) => {
+app.get("/api/flavors", async (req, res, next) => {
   try {
-    const SQL = `SELECT * FROM notes`;
+    const SQL = `SELECT * FROM flavors`;
     const response = await client.query(SQL);
     res.send(response.rows);
   } catch (error) {
@@ -15,9 +15,9 @@ app.get("/api/notes", async (req, res, next) => {
   }
 });
 
-app.get("/api/notes/:id", async (req, res, next) => {
+app.get("/api/flavors/:id", async (req, res, next) => {
   try {
-    const SQL = `SELECT * FROM notes WHERE id=$1`;
+    const SQL = `SELECT * FROM flavors WHERE id=$1`;
     const response = await client.query(SQL, [req.params.id]);
     res.send(response.rows[0]);
   } catch (error) {
@@ -25,7 +25,7 @@ app.get("/api/notes/:id", async (req, res, next) => {
   }
 });
 
-app.post("/api/notes", async (req, res, next) => {
+app.post("/api/flavors", async (req, res, next) => {
   try {
     const SQL = /* sql */ `
           INSERT INTO notes(name, is_favorite)
@@ -41,10 +41,10 @@ app.post("/api/notes", async (req, res, next) => {
   }
 });
 
-app.put("/api/notes/:id", async (req, res, next) => {
+app.put("/api/flavors/:id", async (req, res, next) => {
   try {
     const SQL = /* sql */ `
-          UPDATE notes
+          UPDATE flavors
           SET name=$1, is_favorite=$2, updated_at=now()
           WHERE id=$3
           RETURNING *
@@ -60,10 +60,10 @@ app.put("/api/notes/:id", async (req, res, next) => {
   }
 });
 
-app.delete("/api/notes/:id", async (req, res, next) => {
+app.delete("/api/flavors/:id", async (req, res, next) => {
   try {
     const SQL = /* sql */ `
-          DELETE from notes
+          DELETE from flavors
           WHERE id=$1
           `;
     await client.query(SQL, [req.params.id]);
@@ -79,7 +79,7 @@ const init = async () => {
   let SQL =
     /* sql */
     `
-  DROP TABLE IF EXISTS notes;
+  DROP TABLE IF EXISTS flavors;
   CREATE TABLE notes (
     
     id SERIAL PRIMARY KEY,
@@ -95,10 +95,10 @@ const init = async () => {
   console.log("tables created");
 
   SQL = /* sql */ `
-  INSERT INTO notes(name, is_favorite) VALUES('chocolate', true);
-  INSERT INTO notes(name, is_favorite) VALUES('pepper mint', false);
-    INSERT INTO notes(name, is_favorite) VALUES('strawberry', true);
-    INSERT INTO notes(name, is_favorite) VALUES('mango', true);
+  INSERT INTO flavors(name, is_favorite) VALUES('chocolate', true);
+  INSERT INTO flavors(name, is_favorite) VALUES('pepper mint', false);
+    INSERT INTO flavors(name, is_favorite) VALUES('strawberry', true);
+    INSERT INTO flavors(name, is_favorite) VALUES('mango', true);
   `;
   await client.query(SQL);
   console.log("data seeded");
